@@ -1,0 +1,617 @@
+from tkinter import *
+import math,random
+from tkinter import ttk
+import tkinter.ttk as ttk
+from tkinter.ttk import Combobox
+from tkinter import messagebox
+import sqlite3
+
+def calculator():
+    calcu = Toplevel(main)
+    calcu.geometry("320x295")
+    calcu.resizable(0, 0)
+    calcu.title("CALCULATOR")
+    a = StringVar()
+
+    def show(c):
+        a.set(a.get() + c)
+
+    def clr():
+        a.set("")
+
+    def equ():
+        eqa = a.get()
+        a.set(eval(eqa))
+
+    fc1 = Frame(calcu, relief="groove", bd=5, bg="cornflower blue").place(x=0, y=0, width=320, height=295)
+    b1 = Button(calcu, text="CLR", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3, command=clr,
+                activebackground="red").place(x=10, y=55, width=65,
+                                              height=30)
+    b2 = Button(calcu, text="7", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                command=lambda: show("7"), activebackground="lightgreen").place(x=8, y=90,
+                                                                                width=92,
+                                                                                height=30)
+    b3 = Button(calcu, text="8", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                command=lambda: show("8"), activebackground="lightgreen").place(x=114, y=90,
+                                                                                width=92,
+                                                                                height=30)
+    b4 = Button(calcu, text="9", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                command=lambda: show("9"), activebackground="lightgreen").place(x=221, y=90,
+                                                                                width=92,
+                                                                                height=30)
+    b5 = Button(calcu, text="4", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                command=lambda: show("4"), activebackground="lightgreen").place(x=8, y=125,
+                                                                                width=92,
+                                                                                height=30)
+    b6 = Button(calcu, text="5", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                command=lambda: show("5"), activebackground="lightgreen").place(x=114, y=125,
+                                                                                width=92,
+                                                                                height=30)
+    b7 = Button(calcu, text="6", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                command=lambda: show("6"), activebackground="lightgreen").place(x=221, y=125,
+                                                                                width=92,
+                                                                                height=30)
+    b8 = Button(calcu, text="1", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                command=lambda: show("1"), activebackground="lightgreen").place(x=8, y=160,
+                                                                                width=92,
+                                                                                height=30)
+    b9 = Button(calcu, text="2", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                command=lambda: show("2"), activebackground="lightgreen").place(x=114, y=160,
+                                                                                width=92,
+                                                                                height=30)
+    b10 = Button(calcu, text="3", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                 command=lambda: show("3"), activebackground="lightgreen").place(x=221, y=160,
+                                                                                 width=92,
+                                                                                 height=30)
+    b11 = Button(calcu, text="0", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                 command=lambda: show("0"), activebackground="lightgreen").place(x=8, y=195,
+                                                                                 width=92,
+                                                                                 height=30)
+    b12 = Button(calcu, text="=", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3, command=equ).place(
+        x=114, y=195,
+        width=92,
+        height=35)
+    b12 = Button(calcu, text="+", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                 command=lambda: show("+"), activebackground="lightgreen").place(x=221, y=195,
+                                                                                 width=92,
+                                                                                 height=35)
+    b13 = Button(calcu, text="-", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                 command=lambda: show("-"), activebackground="lightgreen").place(x=8, y=235,
+                                                                                 width=92,
+                                                                                 height=35)
+    b14 = Button(calcu, text="/", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                 command=lambda: show("/"), activebackground="lightgreen").place(x=114, y=235,
+                                                                                 width=92,
+                                                                                 height=37)
+    b15 = Button(calcu, text="*", font=("", 10), bg="lightgrey", fg="black", relief="ridge", bd=3,
+                 command=lambda: show("*"), activebackground="lightgreen").place(x=221, y=235,
+                                                                                 width=92,
+                                                                                 height=37)
+    entry17 = Entry(calcu, font=("Arial", 15), justify="right", textvariable=a).place(x=6, y=8, width=305, height=40)
+
+    calcu.mainloop()
+
+
+
+def calculate():
+    global tot
+    text_area.delete('0.0', END)
+    text_area.insert(END, "***" * 25 + "\n\t\t---:Total  Detail  Recipt:---\n" + "---" * 25)
+    text_area.insert(END, "\n\t day/Week/month\t\t\t\t Spend")
+    text_area.insert(END, "\n" + "---" * 25)
+
+    id = sqlite3.connect("lastuser.db")
+    cr = id.cursor()
+    cr.execute("create table if not exists last(username text)")
+    r = cr.execute("select * from last")
+    lusername = ""
+    for r1 in r:
+        lusername = r1[0];
+    id.commit()
+    id.close()
+
+    id = sqlite3.connect(f"{lusername}.db")
+    cr = id.cursor()
+    cr.execute("create table if not exists Totalspend(Day text,Spend text)")
+    r = cr.execute("select * from Totalspend")
+    tot = 0
+    d=0
+    dayis = ""
+    m=0
+    for r1 in r:
+        d=d+1
+        tot = tot + int(r1[1]);
+        m = m + int(r1[1])
+        if (d == 8):
+            text_area.insert(END, "\n" + "---" * 25)
+            text_area.insert(END, "\n\t" + "      " + " Week1\t\t\t\t" + "      " + str(tot))
+            text_area.insert(END, "\n" + "---" * 25)
+            tot=0
+        if (d == 15):
+            text_area.insert(END, "\n" + "---" * 25)
+            text_area.insert(END, "\n\t" + "      " + " Week2\t\t\t\t" + "      " + str(tot))
+            text_area.insert(END, "\n" + "---" * 25)
+            tot=0
+        if (d == 22):
+            text_area.insert(END, "\n" + "---" * 25)
+            text_area.insert(END, "\n\t" + "      " + " Week3\t\t\t\t" + "      " + str(tot))
+            text_area.insert(END, "\n" + "---" * 25)
+            tot=0
+        if (d == 28):
+            text_area.insert(END, "\n" + "---" * 25)
+            text_area.insert(END, "\n\t" + "      " + " Week4\t\t\t\t" + "      " + str(tot))
+            text_area.insert(END, "\n" + "---" * 25)
+            tot=0
+        if (d == 31):
+            text_area.insert(END, "\n" + "---" * 25)
+            text_area.insert(END, "\n\t" + "      " + " MONTHLY\t\t\t\t" + "      " + str(m))
+            text_area.insert(END, "\n" + "---" * 25)
+            m=0
+            d=0
+        text_area.insert(END, "\n\t" + "      " + f" day{d}\t\t\t\t" + "      " + str(r1[1]))
+
+
+    id.commit()
+    id.close()
+
+
+def clear():
+    text_area.delete('0.0', END)
+    h1.set("0")
+    h2.set("0")
+    h3.set("0")
+    t1.set("0")
+    t2.set("0")
+    t3.set("0")
+    t4.set("0")
+    e1.set("0")
+    e2.set("0")
+    e3.set("0")
+    e4.set("0")
+    l1.set("0")
+    l2.set("0")
+    l3.set("0")
+    l4.set("0")
+    l5.set("0")
+    m1.set("0")
+    m2.set("0")
+    m3.set("0")
+    m4.set("0")
+    i1.set("0")
+    i2.set("0")
+
+
+main=Tk()
+main.geometry("1350x710+0+0")
+#main.resizable(0,0)
+main.title("Spend Calculator")
+#===========================Variable==========================
+h1 = IntVar()
+h2 = IntVar()
+h3 = IntVar()
+t1 = IntVar()
+t2 = IntVar()
+t3 = IntVar()
+t4 = IntVar()
+l1 = IntVar()
+l2 = IntVar()
+l3 = IntVar()
+l4 = IntVar()
+l5 = IntVar()
+e1 = IntVar()
+e2 = IntVar()
+e3 = IntVar()
+e4 = IntVar()
+m1 = IntVar()
+m2 = IntVar()
+m3 = IntVar()
+m4 = IntVar()
+i1 = IntVar()
+i2 = IntVar()
+ts = IntVar()
+name = StringVar()
+
+id = sqlite3.connect("lastuser.db")
+cr = id.cursor()
+cr.execute("create table if not exists last(username text)")
+r = cr.execute("select * from last")
+lusername=""
+for r1 in r:
+        lusername=r1[0];
+id.commit()
+id.close()
+
+
+
+
+id = sqlite3.connect("Name.db")
+cr = id.cursor()
+cr.execute("create table if not exists income(Income text,username text)")
+r = cr.execute("select * from income")
+income =0
+username=""
+for r1 in r:
+    if(r1[1]==lusername):
+        income =int(r1[0]);
+        username=r1[1];
+        break
+    else:
+        income=0
+        username=" "
+id.commit()
+id.close()
+
+id = sqlite3.connect(f"{lusername}.db")
+cr = id.cursor()
+cr.execute("create table if not exists Totalspend(Day text,Spend text)")
+r = cr.execute("select * from Totalspend")
+totalspend = 0
+dayis=""
+for r1 in r:
+    totalspend =totalspend+ int(r1[1]);
+    dayis=r1[0];
+id.commit()
+id.close()
+
+if(income==0):
+    spend_persentage=0
+else:
+    spend_persentage="{:.2f}".format(100-(((income-totalspend)/income)*100))
+
+def save():
+    global income
+    y=day_combo.get()
+    z=today_total_spend
+
+    id = sqlite3.connect("lastuser.db")
+    cr = id.cursor()
+    cr.execute("create table if not exists last(username text)")
+    r = cr.execute("select * from last")
+    lusername = ""
+    for r1 in r:
+        lusername = r1[0];
+    id.commit()
+    id.close()
+
+    id = sqlite3.connect(f"{lusername}.db")
+    cr = id.cursor()
+    cr.execute("create table if not exists Totalspend(Day text,Spend text)")
+    cr.execute("insert into Totalspend(Day,Spend) VALUES('" +str(y)+ "','" +z+ "')")
+    id.commit()
+    id.close()
+
+    id = sqlite3.connect(f"{lusername}.db")
+    cr = id.cursor()
+    cr.execute("create table if not exists Totalspend(Day text,Spend text)")
+    r = cr.execute("select * from Totalspend")
+    totalspend = 0
+    dayis=""
+    for r1 in r:
+        totalspend =totalspend+ int(r1[1]);
+        dayis=r1[0];
+    id.commit()
+    id.close()
+    spend_persentage="{:.2f}".format(100-(((income-totalspend)/income)*100))
+    tot_spend_income_label = Label(main, text=f"SPEND:{totalspend}", relief="flat", fg="black", bd=2, font=("Algerian", 20), bg="seashell2").place(x=670, y=47)
+    persent_label=Label(main,text=f"%:   {spend_persentage}",relief="flat",fg="black",bd=2,font=("Algerian",20),bg="seashell2").place(x=950,y=47)
+
+def done():
+    global income
+    x=i1.get()+i2.get()
+    y=(name.get()).upper()
+
+    id = sqlite3.connect("lastuser.db")
+    cr = id.cursor()
+    cr.execute("create table if not exists last(username text)")
+    cr.execute("insert into last(username) VALUES('" + str(y) + "')")
+    r = cr.execute("select * from last")
+    lusername = ""
+    for r1 in r:
+        lusername = r1[0];
+    id.commit()
+    id.close()
+
+    id = sqlite3.connect("Name.db")
+    cr = id.cursor()
+    cr.execute("create table if not exists income(Income text,username text)")
+    cr.execute("insert into income(Income,username) VALUES('" +str(x)+ "','" +str(y)+ "')")
+    id.commit()
+    id.close()
+
+    id = sqlite3.connect("Name.db")
+    cr = id.cursor()
+    r = cr.execute("select * from income")
+    income = 0
+    username = ""
+    for r1 in r:
+        if (r1[1] == name.get().upper()):
+            income = int(r1[0]);
+            username = r1[1];
+            break
+        else:
+            income = 0
+            username = " "
+    id.commit()
+    id.close()
+
+    id = sqlite3.connect(f"{lusername}.db")
+    cr = id.cursor()
+    cr.execute("create table if not exists Totalspend(Day text,Spend text)")
+    r = cr.execute("select * from Totalspend")
+    totalspend = 0
+    dayis = ""
+    for r1 in r:
+        totalspend = totalspend + int(r1[1]);
+        dayis = r1[0];
+    id.commit()
+    id.close()
+
+    if(income!= 0):
+        id = sqlite3.connect(f"{lusername}.db")
+        cr = id.cursor()
+        cr.execute("create table if not exists Totalspend(Day text,Spend text)")
+        r = cr.execute("select * from Totalspend")
+        id.commit()
+        id.close()
+        spend_persentage = "{:.2f}".format(100-(((income - totalspend) / income) * 100))
+    else:
+        msg = messagebox.showinfo("INFORMATION", "FILL YOUR INCOME")
+
+    tot_income_label = Label(main, text="INCOME:\t\t", relief="flat", fg="black", bd=2, font=("Algerian", 20),
+                             bg="seashell2").place(x=350, y=47)
+    persent_label = Label(main, text="%: \t       ", relief="flat", fg="black", bd=2, font=("Algerian", 20),
+                          bg="seashell2").place(x=950, y=47)
+    id_name_label = Label(main, text="ID:\t\t", relief="flat", fg="black", bd=2, font=("Algerian", 20),
+                          bg="seashell2").place(x=20, y=47)
+    tot_spend_income_label = Label(main, text="SPEND:\t\t", relief="flat", fg="black", bd=2,
+                                   font=("Algerian", 20), bg="seashell2").place(x=670, y=47)
+
+    tot_income_label = Label(main, text=f"INCOME:{income}", relief="flat", fg="black", bd=2, font=("Algerian", 20),
+                             bg="seashell2").place(x=350, y=47)
+    persent_label = Label(main, text=f"%:   {spend_persentage}", relief="flat", fg="black", bd=2, font=("Algerian", 20),
+                          bg="seashell2").place(x=950, y=47)
+    id_name_label = Label(main, text=f"ID:{username}", relief="flat", fg="black", bd=2, font=("Algerian", 20),
+                          bg="seashell2").place(x=20, y=47)
+    tot_spend_income_label = Label(main, text=f"SPEND:{totalspend}", relief="flat", fg="black", bd=2,
+                                   font=("Algerian", 20), bg="seashell2").place(x=670, y=47)
+    i1.set("0")
+    i2.set("0")
+    name.set("")
+
+#==============================check Detail Output=================================================
+def submit():
+    global submit,today_total_spend
+    today_total_spend = str( h1.get() + h2.get() + h3.get() + t1.get() + t2.get() + t3.get() +
+                             l1.get() + l2.get() + l3.get() + l4.get() + l5.get() + e1.get() +
+                             e2.get() + e3.get() +e4.get() + m1.get() + m2.get() + m3.get() +
+                             m4.get())
+
+    text_area.delete('0.0', END)
+    text_area.insert(END, "***" * 25 + "\n\t\t---:Today  Detail  Recipt:---\n" + "---" * 25)
+    text_area.insert(END, "\n\t Categries Name\t\t\t\t Spend")
+    text_area.insert(END, "\n"+"---" * 25)
+    if(h1.get() != 0):
+        text_area.insert(END,"\n\t"+"      "+" Rental\t\t\t\t"+ "      "+str(h1.get()))
+    if (h2.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Home Maintenance\t\t\t\t" + "      " + str(h2.get()))
+    if (h3.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Utilities\t\t\t\t" + "      " + str(h3.get()))
+    if (t1.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Gasoline\t\t\t\t" + "      " + str(t1.get()))
+    if (t2.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Parking/Tolls\t\t\t\t" + "      " + str(t2.get()))
+    if (t3.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Auto Maintenance\t\t\t\t" + "      " + str(t3.get()))
+    if (t4.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Other Transportation\t\t\t\t" + "      " + str(t4.get()))
+    if (l1.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Food\t\t\t\t" + "      " + str(l1.get()))
+    if (l2.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Cloth\t\t\t\t" + "      " + str(l2.get()))
+    if (l3.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Household supplies\t\t\t\t" + "      " + str(l3.get()))
+    if (l4.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Meals Out\t\t\t\t" + "      " + str(l4.get()))
+    if (l5.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Other(Leving related)\t\t\t\t" + "      " + str(l5.get()))
+    if (e1.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Child & Personal care\t\t\t\t" + "      " + str(e1.get()))
+    if (e2.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Tuition & Supplies\t\t\t\t" + "      " + str(e2.get()))
+    if (e3.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Child Support Payments\t\t\t\t" + "      " + str(e3.get()))
+    if (e4.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Other(Edu.)\t\t\t\t" + "      " + str(e4.get()))
+    if (m1.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Hobbies & Sport\t\t\t\t" + "      " + str(m1.get()))
+    if (m2.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Entertainment & Ticket\t\t\t\t" + "      " + str(m2.get()))
+    if (m3.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Travel & Vacation\t\t\t\t" + "      " + str(m3.get()))
+    if (m4.get() != 0):
+        text_area.insert(END, "\n\t" + "      " + " Other Expenses\t\t\t\t" + "      " + str(m4.get()))
+    text_area.insert(END, "\n" + "---" * 25)
+    text_area.insert(END, "\n\t" + "      " + " Today"+ "      " + "Total"+ "      " +" Spend\t\t\t\t" + "      " + today_total_spend)
+    text_area.insert(END, "\n" + "---" * 25)
+    ts.set(today_total_spend)
+
+title=Label(main, text="SPEND CALCULATOR",relief="raised",fg="cyan",bd=3,font=("Algerian",25,"bold"),bg="darkslate gray",pady=2).pack(fill=X)
+coderisers_lable=Label(main, text="--::(CODE RISERS)::-",relief="flat",fg="yellow",bd=3,font=("Algerian",15,"bold"),bg="darkslate gray",pady=2).place(x=1120,y=15)
+name_frame=Label(main, relief="raised",height=2,bd=2, bg="seashell2", pady=6).pack(fill=X)
+#====================================id_name,Income,total_spend,persentage==============================
+id_name_label=Label(main,text=f"ID:{username}",relief="flat",fg="black",bd=2,font=("Algerian",20),bg="seashell2").place(x=20,y=47)
+tot_income_label=Label(main,text=f"INCOME:{income}",relief="flat",fg="black",bd=2,font=("Algerian",20),bg="seashell2").place(x=350,y=47)
+tot_spend_income_label=Label(main,text=f"SPEND:{totalspend}",relief="flat",fg="black",bd=2,font=("Algerian",20),bg="seashell2").place(x=670,y=47)
+persent_label=Label(main,text=f"%:   {spend_persentage}",relief="flat",fg="black",bd=2,font=("Algerian",20),bg="seashell2").place(x=950,y=47)
+#=========================================Month======================================
+month_label=Label(name_frame,text="Month",relief="flat",fg="black",bd=2,font=("Algerian",8),bg="seashell2").place(x=1275,y=50)
+month=["Janury","February","March","April","May","June","July","August","September","October","November","December"]
+monthcombo=Combobox(name_frame,value=month,width=10)
+monthcombo.set("--select--")
+monthcombo.place(x=1250,y=65)
+#======================================Day======================
+day_label=Label(name_frame,text="Day",relief="flat",fg="black",bd=2,font=("Algerian",8),bg="seashell2").place(x=1185,y=50)
+day=list(range(1,32))
+day_combo=Combobox(name_frame,value=day,width=5)
+day_combo.set("--select--")
+day_combo.place(x=1175,y=65)
+
+#====================================Income Frame===================================
+income_frame=Label(main, relief="raised",height=3,bd=2, bg="gold", pady=6).pack(fill=X)
+namelabel=Label(income_frame, text="--:Name & Income ( New USER ):--",relief="flat",fg="black",bd=2,font=("Algerian",12,"bold"),bg="gold").place(x=5,y=93)
+
+#=====================================Income detail=================================
+name_l1=Label(income_frame,text="Name :-",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="gold").place(x=80,y=120)
+name_e1=Entry(income_frame, text="",textvariable=name, relief="raised", width=30, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=150,y=120)
+
+
+Income_l1=Label(income_frame,text="Salary :-",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="gold").place(x=470,y=120)
+Income_e1=Entry(income_frame, text="",textvariable=i1, relief="raised", width=20, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=550,y=120)
+
+Income_l2=Label(income_frame,text="Other Income :-",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="gold").place(x=770,y=120)
+Income_e2=Entry(income_frame, text="", textvariable=i2,relief="raised", width=20, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=900,y=120)
+
+#==============================Expreses frame1================
+
+expences_frame1=Label(main, relief="raised",height=25,width=60,bd=2, bg="light sky blue", pady=6).place(x=0,y=154)
+expences_lable=Label(expences_frame1,text="--:Expences:--",relief="flat",fg="black",bd=2,font=("Algerian",12,"bold"),bg="light sky blue").place(x=5,y=156)
+
+#================================Housing & Utilities=====================================
+
+house_lable=Label(expences_frame1,text="Housing & Utilities:--",relief="flat",fg="black",bd=2,font=("Algerian",10,"bold"),bg="light sky blue").place(x=8,y=173)
+
+hl1=Label(expences_frame1,text="Rental",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=40,y=200)
+he1=Entry(expences_frame1, text="", relief="raised", width=15,textvariable=h1, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=220,y=200)
+
+hl2=Label(expences_frame1,text="Home Maintenance",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=40,y=230)
+he2=Entry(expences_frame1, text="", relief="raised",textvariable=h2, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=220,y=230)
+
+hl3=Label(expences_frame1,text="Utilities",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=40,y=260)
+he3=Entry(expences_frame1, text="", relief="raised",textvariable=h3, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=220,y=260)
+
+hl3=Label(expences_frame1,text="(Electric,Gas,Water,Cable,etc)",relief="flat",fg="black",bd=2,font=("Algerian",8),bg="light sky blue").place(x=40,y=280)
+
+#================================Transportation============================================
+
+transport_lable=Label(expences_frame1,text="Transportation:--",relief="flat",fg="black",bd=2,font=("Algerian",10,"bold"),bg="light sky blue").place(x=8,y=310)
+
+tl1=Label(expences_frame1,text="Gasoline",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=40,y=337)
+te1=Entry(expences_frame1, text="", relief="raised",textvariable=t1, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=220,y=337)
+
+tl2=Label(expences_frame1,text="Parking/Tolls",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=40,y=367)
+te2=Entry(expences_frame1, text="", relief="raised",textvariable=t2, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=220,y=367)
+
+tl3=Label(expences_frame1,text="Auto Maintenance",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=40,y=397)
+te3=Entry(expences_frame1, text="", relief="raised",textvariable=t3, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=220,y=397)
+
+tl4=Label(expences_frame1,text="Other Transportation ",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=40,y=427)
+te4=Entry(expences_frame1, text="", relief="raised",textvariable=t4, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=220,y=427)
+
+tl5=Label(expences_frame1,text="(Ticket,Taxi,registration,etc)",relief="flat",fg="black",bd=2,font=("Algerian",8),bg="light sky blue").place(x=40,y=447)
+
+#==============================Expreses frame2================
+
+expences_frame2=Label(main, relief="raised",height=25,width=60,bd=2, bg="light sky blue", pady=6).place(x=428,y=154)
+
+#=====================================Living Expencess==================
+
+living_lable=Label(expences_frame2,text="Living Expencess:--",relief="flat",fg="black",bd=2,font=("Algerian",10,"bold"),bg="light sky blue").place(x=436,y=173)
+
+ll1=Label(expences_frame2,text="Food",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=468,y=200)
+le1=Entry(expences_frame2, text="", relief="raised",textvariable=l1, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=648,y=200)
+
+ll2=Label(expences_frame2,text="cloth",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=468,y=230)
+le2=Entry(expences_frame2, text="", relief="raised",textvariable=l2, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=648,y=230)
+
+ll3=Label(expences_frame2,text="Household supplies",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=468,y=260)
+le3=Entry(expences_frame2, text="", relief="raised",textvariable=l3, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=648,y=260)
+
+ll4=Label(expences_frame2,text="Meals Out",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=468,y=290)
+le4=Entry(expences_frame2, text="", relief="raised",textvariable=l4, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=648,y=290)
+
+ll5=Label(expences_frame2,text="other",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=468,y=320)
+le5=Entry(expences_frame2, text="", relief="raised",textvariable=l5, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=648,y=320)
+
+ll6=Label(expences_frame2,text="(laundary,barber,beauty,alcohal,etc)",relief="flat",fg="black",bd=2,font=("Algerian",8),bg="light sky blue").place(x=468,y=340)
+
+#=============================Education=================================
+
+edu_lable=Label(expences_frame2,text="Education:--",relief="flat",fg="black",bd=2,font=("Algerian",10,"bold"),bg="light sky blue").place(x=436,y=370)
+
+el1=Label(expences_frame1,text="Child & Personal care",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=468,y=397)
+ee1=Entry(expences_frame1, text="", relief="raised",textvariable=e1, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=648,y=397)
+
+el2=Label(expences_frame1,text="Tuition & Supplies",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=468,y=427)
+ee2=Entry(expences_frame1, text="", relief="raised",textvariable=e2, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=648,y=427)
+
+el3=Label(expences_frame1,text="Child Support Payments",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=468,y=457)
+ee3=Entry(expences_frame1, text="", relief="raised",textvariable=e3, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=648,y=457)
+
+el4=Label(expences_frame1,text="Other Spending",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=468,y=487)
+ee4=Entry(expences_frame1, text="", relief="raised",textvariable=e4, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=648,y=487)
+
+el5=Label(expences_frame2,text="(book,software,magazine,device,etc)",relief="flat",fg="black",bd=2,font=("Algerian",8),bg="light sky blue").place(x=468,y=507)
+
+#=================================Expenses Frame3=================================
+
+expences_frame3=Label(main, relief="raised",height=7,width=121,bd=2, bg="light sky blue", pady=6).place(x=0,y=545)
+
+#=============================Miscellaneous Expensess=================================
+
+Miscellaneous_lable=Label(expences_frame3,text="Miscellaneous Expensess:--",relief="flat",fg="black",bd=2,font=("Algerian",10,"bold"),bg="light sky blue").place(x=8,y=555)
+
+Ml1=Label(expences_frame3,text="Hobbies & Sport",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=40,y=590)
+Me1=Entry(expences_frame3, text="", relief="raised", textvariable=m1,width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=240,y=590)
+
+Ml2=Label(expences_frame3,text="Entertainment & Ticket",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=448,y=590)
+Me2=Entry(expences_frame3, text="", relief="raised", textvariable=m2,width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=628,y=590)
+
+Ml5=Label(expences_frame3,text="(Gym,Membership,etc)",relief="flat",fg="black",bd=2,font=("Algerian",8),bg="light sky blue").place(x=40,y=610)
+
+Ml3=Label(expences_frame3,text="Travel & Vacation",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=40,y=630)
+Me3=Entry(expences_frame3, text="", relief="raised",textvariable=m3, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=240,y=630)
+
+Ml4=Label(expences_frame3,text="Other Expenses",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=448,y=630)
+Me4=Entry(expences_frame3, text="", relief="raised",textvariable=m4, width=15, bd=1, bg="white", fg="black", font=("Bahnschrift",10)).place(x=628,y=630)
+
+#====================================Check Detail===========================
+
+check_detail_frame=Frame(main,bd=2,relief="groove",bg="silver")
+check_detail_frame.place(x=855,y=154,width=492,height=405)
+
+Check_details_title=Label(check_detail_frame, text="check detail",relief="raised",width=27,fg="midnight blue",bd=3,font=("Algerian",20,"bold"),bg="rosy brown").pack(fill=X)
+scroll_y=Scrollbar(check_detail_frame,orient=VERTICAL)
+text_area=Text(check_detail_frame, relief="raised", width=67,height=23, bd=1, bg="white", fg="black",yscrollcommand=scroll_y.set, font=("Bahnschrift",10))
+scroll_y.pack(side=RIGHT,fill=Y)
+scroll_y.config(command=text_area.yview)
+text_area.pack()
+
+#==============================Buttons================================================
+submit_button=Button(main, text=" Submit ", relief="raised", width=9, height=1, bd=3, bg="snow2", fg="black", activebackground="green", activeforeground="white",command=submit)
+submit_button.place(x=400,y=670)
+
+clear_button=Button(main, text=" Clear ", relief="raised", width=9, height=1, bd=3, bg="snow2", fg="black", activebackground="green", activeforeground="white",command=clear)
+clear_button.place(x=930,y=565)
+
+save_button=Button(main, text=" Save ", relief="raised", width=9, height=1, bd=3, bg="snow2", fg="black", activebackground="green", activeforeground="white",command=save)
+save_button.place(x=1060,y=565)
+
+cal_button=Button(main, text=" Calculate ", relief="raised", width=9, height=1, bd=3, bg="snow2", fg="black", activebackground="green", activeforeground="white",command=calculate)
+cal_button.place(x=1190,y=565)
+
+done_button=Button(main, text=" DONE ", relief="raised", width=9, height=1, bd=3, bg="snow2", fg="black", activebackground="green", activeforeground="white",command=done)
+done_button.place(x=1110,y=115)
+
+calcu_button=Button(main, text=" CALCULATOR ", relief="raised", width=15, height=1, bd=3, bg="snow2", fg="black", activebackground="green", activeforeground="white",command=calculator)
+calcu_button.place(x=1210,y=115)
+
+exit_button=Button(main, text=" EXIT ", relief="raised", width=9, height=1, bd=3, bg="snow2", fg="black", activebackground="green", activeforeground="white",command=main.destroy)
+exit_button.place(x=1240,y=680)
+
+#===========================ouput (total spend, porofit or loss persent)=======================================
+
+today_spend=Label(main,text="Today\tSpend",relief="flat",fg="black",bd=2,font=("Algerian",10),bg="light sky blue").place(x=900,y=620)
+today_spend = Entry(main, relief="raised", width=15,textvariable=ts, bd=1, bg="white", fg="black",font=("Bahnschrift", 10)).place(x=1050, y=620)
+
+main.config(bg="light sky blue")
+main.mainloop()
